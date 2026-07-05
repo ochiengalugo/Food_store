@@ -37,3 +37,15 @@ def test_add_item(client):
     assert response.status_code == 201
     assert response.get_json()['product_name'] == "Test Apple"
     assert response.get_json()['id'] is not None
+
+
+def test_update_item(client):
+    update_data = {
+        "price": 6.49,
+        "quantity": 45
+    }
+    response = client.patch('/inventory/1', json=update_data)
+    assert response.status_code == 200
+    json_data = response.get_json()
+    assert json_data['price'] == 6.49
+    assert json_data['quantity'] == 45
