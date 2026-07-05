@@ -13,3 +13,13 @@ def test_get_all_items(client):
     response = client.get('/inventory')
     assert response.status_code == 200
     assert isinstance(response.get_json(), list)
+
+def test_get_single_item(client):
+    
+    response = client.get('/inventory/1')
+    assert response.status_code == 200
+    assert response.get_json()['product_name'] == "Nutella 400g"
+
+    
+    response = client.get('/inventory/999')
+    assert response.status_code == 404
