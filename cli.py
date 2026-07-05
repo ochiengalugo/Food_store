@@ -82,3 +82,34 @@ def add_item():
             print(f"Failed to add item: {response.text}")
     except requests.exceptions.ConnectionError:
         print("API Failure: Server unreachable.")
+
+
+def update_item():
+    item_id = input("Enter the Item ID to update: ").strip()
+    print("Leave field blank if you do not want to change it.")
+    
+    payload = {}
+    price_input = input("Enter new price: ").strip()
+    stock_input = input("Enter new stock level: ").strip()
+
+    try:
+        if price_input:
+            payload["price"] = float(price_input)
+        if stock_input:
+            payload["quantity"] = int(stock_input)
+    except ValueError:
+        print("Error: Input must be numeric numbers.")
+        return
+
+    if not payload:
+        print("No updates entered.")
+        return
+
+    try:
+        response = requests.patch(f"{BASE_URL}/inventory/{item_id}", json=payload)
+        if response.status_code == 200:
+            print("Item updated successfully!")
+        else:
+            print(f"Error: {response.json().get('error', 'Update failed')}")
+    except requests.exceptions.ConnectionError:
+        print("API Failure: Server unreachable.")
