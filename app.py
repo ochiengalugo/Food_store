@@ -129,6 +129,47 @@ def update_item(item_id):
         
     return jsonify(item), 200
 
+# PATCH /inventory/<id> -> Update an item
+@app.route('/inventory/<string:item_id>', methods=['PATCH'])
+def update_item(item_id):
+    item = next((i for i in inventory_db if i["id"] == item_id), None)
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+        
+    data = request.get_json() or {}
+    
+    # Selective updates
+    if "price" in data:
+        item["price"] = float(data["price"])
+    if "quantity" in data:
+        item["quantity"] = int(data["quantity"])
+    if "product_name" in data:
+        item["product_name"] = data["product_name"]
+        
+    return jsonify(item), 200
+
+
+@app.route('/inventory/<string:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    global inventory_db
+    item = next((i for i in inventory_db if i["id"] == item_id), None)
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+        
+    inventory_db = [i for i in inventory_db if i["id"] != item_id]
+    return jsonify({"message": f"Item {item_id} deleted successfully"}), 200
+
+
+@app.route('/external-search', methods=['GET'])
+def external_search():
+    query = request.args.get('q')
+    if not query:
+        return jsonify({"error": "Missing search query parameter 'q'"}), 400
+    
+    result = fetch_from_openfoodfacts(query)
+    if result:
+        return jsonify(result), 200
+    return jsonify({"error": "Product not found on external API"}), 404
 
 if __name__ == '__main__':
     
