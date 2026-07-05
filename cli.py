@@ -163,6 +163,28 @@ def find_on_external_api():
     except requests.exceptions.ConnectionError:
         print("API Failure: Server unreachable.")
 
+def main():
+    while True:
+        display_menu()
+        choice = input("Select an option (1-7): ").strip()
+        
+        if choice == '1':
+            view_all()
+        elif choice == '2':
+            view_item()
+        elif choice == '3':
+            add_item()
+        elif choice == '4':
+            update_item()
+        elif choice == '5':
+            delete_item_portal()
+        elif choice == '6':
+            find_on_external_api()
+        elif choice == '7':
+            print("Exiting Administrator Portal. Goodbye!")
+            sys.exit()
+        else:
+            print("Invalid selection. Please pick a number between 1 and 7.")
 
 if __name__ == '__main__':
     main()
