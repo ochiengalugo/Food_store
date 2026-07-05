@@ -23,3 +23,17 @@ def test_get_single_item(client):
     
     response = client.get('/inventory/999')
     assert response.status_code == 404
+
+
+def test_add_item(client):
+    new_item = {
+        "product_name": "Test Apple",
+        "code": "1111111111111",
+        "brands": "Fruit Co",
+        "price": 0.99,
+        "quantity": 10
+    }
+    response = client.post('/inventory', json=new_item)
+    assert response.status_code == 201
+    assert response.get_json()['product_name'] == "Test Apple"
+    assert response.get_json()['id'] is not None
