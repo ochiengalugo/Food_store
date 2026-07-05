@@ -14,3 +14,16 @@ def display_menu():
     print("7. Exit")
     print("===================================")
 
+def view_all():
+    try:
+        response = requests.get(f"{BASE_URL}/inventory")
+        if response.status_code == 200:
+            items = response.json()
+            print("\nID  | Name                     | Price  | Stock | Barcode")
+            print("-" * 60)
+            for item in items:
+                print(f"{item['id']:3} | {item['product_name'][:24]:24} | ${item['price']:5.2f} | {item['quantity']:5} | {item['code']}")
+        else:
+            print(f"Error fetching inventory: {response.text}")
+    except requests.exceptions.ConnectionError:
+        print("API Failure: Cannot connect to the Flask server. Is it running?")
