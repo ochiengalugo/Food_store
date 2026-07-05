@@ -131,5 +131,38 @@ def delete_item_portal():
     except requests.exceptions.ConnectionError:
         print("API Failure: Server unreachable.")
 
+def find_on_external_api():
+    query = input("Enter barcode or name to query from OpenFoodFacts: ").strip()
+    if not query:
+        return
+        
+    try:
+        response = requests.get(f"{BASE_URL}/external-search", params={"q": query})
+        if response.status_code == 200:
+            data = response.json()
+            print("\n--- Found on External Data Stream ---")
+            print(f"Name: {data.get('product_name')}")
+            print(f"Brand: {data.get('brands')}")
+            print(f"Code: {data.get('code')}")
+            
+            save = input("\nWould you like to import this into your local inventory? (y/N): ").lower()
+            if save == 'y':
+                try:
+                    price = float(input("Assign retail price: "))
+                    qty = int(input("Assign initial stock quantity: "))
+                    data["price"] = price
+                    data["quantity"] = qty
+                    
+                    post_res = requests.post(f"{BASE_URL}/inventory", json=data)
+                    if post_res.status_code == 201:
+                        print("Successfully imported into local tracking list!")
+                except ValueError:
+                    print("Invalid figures. Import aborted.")
+        else:
+            print("Product not discovered in the OpenFoodFacts registry database.")
+    except requests.exceptions.ConnectionError:
+        print("API Failure: Server unreachable.")
+
+
 if __name__ == '__main__':
     main()
