@@ -58,3 +58,13 @@ def test_delete_item(client):
     
     get_response = client.get('/inventory/2')
     assert get_response.status_code == 404
+
+
+def test_external_search_found(client):
+    response = client.get('/external-search?q=kitkat')
+    assert response.status_code == 200
+    assert response.get_json()['product_name'] == "KitKat Chunky"
+
+def test_external_search_missing(client):
+    response = client.get('/external-search?q=unknown_item_xyz')
+    assert response.status_code == 404
