@@ -113,3 +113,23 @@ def update_item():
             print(f"Error: {response.json().get('error', 'Update failed')}")
     except requests.exceptions.ConnectionError:
         print("API Failure: Server unreachable.")
+
+def delete_item_portal():
+    item_id = input("Enter the Item ID to delete: ").strip()
+    confirm = input(f"Are you sure you want to permanently delete item {item_id}? (y/N): ").lower()
+    
+    if confirm != 'y':
+        print("Deletion cancelled.")
+        return
+
+    try:
+        response = requests.delete(f"{BASE_URL}/inventory/{item_id}")
+        if response.status_code == 200:
+            print("Product removed successfully.")
+        else:
+            print(f"Error: {response.json().get('error', 'Delete failed')}")
+    except requests.exceptions.ConnectionError:
+        print("API Failure: Server unreachable.")
+
+if __name__ == '__main__':
+    main()
